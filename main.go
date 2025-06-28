@@ -1,51 +1,29 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"learning/config"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/roonglit/credentials/pkg/credentials"
 )
 
-type User struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Age   int    `json:"age"`
-	Email string `json:"email"`
-}
-
-type Person struct {
-	Name string `validate:"required"`
-	Age  int    `validate:"gte=0,lte=150"`
-}
-
 func main() {
-	user := User{
-		ID:    1,
-		Name:  "John",
-		Age:   25,
-		Email: "john@example.com",
-	}
-	fmt.Println("user:", user)
+	reader := credentials.NewConfigReader()
 
-	jsonData, err := json.Marshal(user)
-	if err != nil {
-		fmt.Println("JSON marshal error:", err)
-		return
-	}
-	fmt.Println("jsonData:", string(jsonData))
-
-	validate := validator.New()
-
-	person := Person{
-		Name: "",
-		Age:  25,
+	var config config.Config
+	if err := reader.Read("debug", &config); err != nil {
+		panic(err)
 	}
 
-	err = validate.Struct(person)
-	if err != nil {
-		fmt.Println("Validation error:", err)
-	} else {
-		fmt.Println("Person is valid:", person)
+	fmt.Println("App Name:", config.AppName)
+	fmt.Println("Port:", config.Port)
+	fmt.Println("DBURI:", config.DBURI)
+
+	if err := reader.Read("release", &config); err != nil {
+		panic(err)
 	}
+
+	fmt.Println("App Name:", config.AppName)
+	fmt.Println("Port:", config.Port)
+	fmt.Println("DBURI:", config.DBURI)
 }
