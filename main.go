@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Point struct {
 	x int
@@ -12,13 +14,17 @@ func (p *Point) move(x, y int) {
 	p.y += y
 }
 
-func (p *Point) display() string{
+func (p *Point) display() string {
 	return fmt.Sprintf("Point: (%d, %d)", p.x, p.y)
 }
 
-type Car struct{
+type Car struct {
 	Point
 	Color string
+}
+
+type Displayable interface {
+	display() string
 }
 
 func main() {
@@ -27,8 +33,11 @@ func main() {
 	p.move(4, 5)
 	fmt.Println(p)
 
-	car := Car{Color:"red",Point: Point{x:5,y:10}}
-	car.move(2,3)
+	car := Car{Color: "red", Point: Point{x: 5, y: 10}}
+	car.move(2, 3)
 	fmt.Println(car.display())
+
+	var d Displayable = &car
+	fmt.Println(d.display())
 
 }
